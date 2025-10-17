@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sortable Employee Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:hover {
+            background-color: #e0f7fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Employee Table</h2>
+        <table id="employeeTable">
+            <thead>
+                <tr>
+                    <th data-column="name">Name</th>
+                    <th data-column="department">Department</th>
+                    <th data-column="salary">Salary</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Table rows will be added dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const employees = [
+            { name: "Alice", department: "HR", salary: 5000 },
+            { name: "Bob", department: "IT", salary: 7000 },
+            { name: "Charlie", department: "Finance", salary: 6000 },
+            { name: "David", department: "Marketing", salary: 5500 },
+            { name: "Eva", department: "IT", salary: 7200 }
+        ];
+
+        let sortOrder = {
+            name: 'asc',
+            department: 'asc',
+            salary: 'asc'
+        };
+
+        const tableBody = document.getElementById('tableBody');
+        const headers = document.querySelectorAll('th[data-column]');
+
+        function renderTable(data) {
+            tableBody.innerHTML = '';
+            data.forEach(emp => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${emp.name}</td>
+                    <td>${emp.department}</td>
+                    <td>${emp.salary}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function sortTable(column) {
+            const order = sortOrder[column];
+            employees.sort((a, b) => {
+                if (typeof a[column] === 'string') {
+                    return order === 'asc' ? a[column].localeCompare(b[column]) : b[column].localeCompare(a[column]);
+                } else {
+                    return order === 'asc' ? a[column] - b[column] : b[column] - a[column];
+                }
+            });
+            sortOrder[column] = order === 'asc' ? 'desc' : 'asc';
+            renderTable(employees);
+        }
+
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.getAttribute('data-column');
+                sortTable(column);
+            });
+        });
+
+        // Initial render
+        renderTable(employees);
+    </script>
+</body>
+</html>
